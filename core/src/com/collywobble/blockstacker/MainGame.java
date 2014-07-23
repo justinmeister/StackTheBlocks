@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class MainGame extends Game {
     public Batch batch;
+    final public int WIDTH = 480;
+    final public int HEIGHT = 800;
 
 	@Override
 	public void create () {
