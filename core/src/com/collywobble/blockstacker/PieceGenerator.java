@@ -1,5 +1,6 @@
 package com.collywobble.blockstacker;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -46,17 +47,17 @@ public class PieceGenerator extends Actor {
 
     private Array<int[][]> makeIPositions(){
         int[][] position0 = new int[][]{
+                {0, 0, 0, 0},
+                {1, 1, 1, 1},
+                {0, 0, 0, 0},
+                {0, 0, 0, 0}
+        };
+
+        int[][] position1 = new int[][]{
                 {0, 1, 0, 0},
                 {0, 1, 0, 0},
                 {0, 1, 0, 0},
                 {0, 1, 0, 0}
-        };
-
-        int[][] position1 = new int[][]{
-                {0, 0, 0, 0},
-                {0, 0, 0, 0},
-                {0, 0, 0, 0},
-                {1, 1, 1, 1}
         };
 
         Array<int[][]> IPositions = new Array<int[][]>();
@@ -70,8 +71,8 @@ public class PieceGenerator extends Actor {
         int[][] position0 = new int[][]{
                 {0, 0, 0, 0},
                 {0, 0, 0, 0},
-                {0, 1, 1, 0},
-                {0, 1, 1, 0}
+                {1, 1, 0, 0},
+                {1, 1, 0, 0}
         };
 
         Array<int[][]> OPositions = new Array<int[][]>();
@@ -132,9 +133,9 @@ public class PieceGenerator extends Actor {
 
         int[][] position1 = new int[][]{
                 {0, 0, 0, 0},
-                {1, 0, 0, 0},
-                {1, 1, 0, 0},
-                {0, 1, 0, 0}
+                {0, 1, 0, 0},
+                {0, 1, 1, 0},
+                {0, 0, 1, 0}
         };
 
         Array<int[][]> SPositions = new Array<int[][]>();
@@ -155,9 +156,9 @@ public class PieceGenerator extends Actor {
 
         int[][] position1 = new int[][]{
                 {0, 0, 0, 0},
-                {0, 1, 0, 0},
-                {1, 1, 0, 0},
-                {1, 0, 0, 0}
+                {0, 0, 1, 0},
+                {0, 1, 1, 0},
+                {0, 1, 0, 0}
         };
 
         Array<int[][]> ZPositions = new Array<int[][]>();
@@ -168,7 +169,15 @@ public class PieceGenerator extends Actor {
     }
 
     private Array<int[][]> makeJPositions(){
+
         int[][] position0 = new int[][]{
+                {0, 0, 0, 0},
+                {0, 0, 0, 0},
+                {1, 1, 1, 0},
+                {0, 0, 1, 0}
+        };
+
+        int[][] position1 = new int[][]{
                 {0, 0, 0, 0},
                 {0, 1, 0, 0},
                 {0, 1, 0, 0},
@@ -176,28 +185,22 @@ public class PieceGenerator extends Actor {
         };
 
 
-        int[][] position1 = new int[][]{
-                {0, 0, 0, 0},
-                {0, 0, 0, 0},
-                {1, 0, 0, 0},
-                {1, 1, 1, 0}
-        };
-
-
         int[][] position2 = new int[][]{
                 {0, 0, 0, 0},
-                {1, 1, 0, 0},
                 {1, 0, 0, 0},
-                {1, 0, 0, 0}
+                {1, 1, 1, 0},
+                {0, 0, 0, 0}
         };
 
 
         int[][] position3 = new int[][]{
                 {0, 0, 0, 0},
-                {0, 0, 0, 0},
-                {1, 1, 1, 0},
-                {0, 0, 1, 0}
+                {0, 1, 1, 0},
+                {0, 1, 0, 0},
+                {0, 1, 0, 0}
         };
+
+
 
         Array<int[][]> JPositions = new Array<int[][]>();
         JPositions.add(position0);
@@ -209,35 +212,33 @@ public class PieceGenerator extends Actor {
     }
 
     private Array<int[][]> makeLPositions(){
+
         int[][] position0 = new int[][]{
-                {0, 0, 0, 0},
-                {1, 0, 0, 0},
-                {1, 0, 0, 0},
-                {1, 1, 0, 0}
-        };
-
-
-        int[][] position1 = new int[][]{
                 {0, 0, 0, 0},
                 {0, 0, 0, 0},
                 {1, 1, 1, 0},
                 {1, 0, 0, 0}
         };
 
-
-        int[][] position2 = new int[][]{
+        int[][] position1 = new int[][]{
                 {0, 0, 0, 0},
                 {1, 1, 0, 0},
                 {0, 1, 0, 0},
                 {0, 1, 0, 0}
         };
 
+        int[][] position2 = new int[][]{
+                {0, 0, 0, 0},
+                {0, 0, 1, 0},
+                {1, 1, 1, 0},
+                {0, 0, 0, 0}
+        };
 
         int[][] position3 = new int[][]{
                 {0, 0, 0, 0},
-                {0, 0, 0, 0},
-                {0, 0, 1, 0},
-                {1, 1, 1, 0}
+                {0, 1, 0, 0},
+                {0, 1, 0, 0},
+                {0, 1, 1, 0}
         };
 
         Array<int[][]> LPositions = new Array<int[][]>();
@@ -250,7 +251,8 @@ public class PieceGenerator extends Actor {
     }
 
     public Piece makePiece() {
-        int randomNumber = (int) (Math.random() * 7 - 1);
+        int randomNumber = (int) (Math.random() * 8 - 1);
+        Gdx.app.log("Random number: ", String.valueOf(randomNumber));
 
         switch (randomNumber) {
             case(0):
