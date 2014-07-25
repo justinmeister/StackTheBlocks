@@ -1,6 +1,5 @@
 package com.collywobble.blockstacker;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -32,10 +31,9 @@ public class PieceGenerator extends Actor {
 
     @Override
     public void act(float delta) {
-        if (TimeUtils.timeSinceMillis(newPieceTimer) > 5000) {
-            if (newPiece == null) {
-                newPiece = makePiece();
-            }
+        if (TimeUtils.timeSinceMillis(newPieceTimer) > 500) {
+            newPiece = makePiece();
+            newPieceTimer = TimeUtils.millis();
         }
     }
 
@@ -252,6 +250,25 @@ public class PieceGenerator extends Actor {
     }
 
     public Piece makePiece() {
-        return new Piece("L", L_positions, Color.RED);
+        int randomNumber = (int) (Math.random() * 7 - 1);
+
+        switch (randomNumber) {
+            case(0):
+                return new Piece("I", I_positions, Color.BLUE);
+            case(1):
+                return new Piece("O", O_positions, Color.PINK);
+            case(2):
+                return new Piece("T", T_positions, Color.CYAN);
+            case(3):
+                return new Piece("S", S_positions, Color.ORANGE);
+            case(4):
+                return new Piece("Z", Z_positions, Color.RED);
+            case(5):
+                return new Piece("L", L_positions, Color.MAGENTA);
+            case(6):
+                return new Piece("J", J_positions, Color.GREEN);
+
+        }
+        return new Piece("J", J_positions, Color.GREEN);
     }
 }
