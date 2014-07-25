@@ -1,18 +1,26 @@
 package com.collywobble.blockstacker;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 
 public class PieceGenerator extends Actor {
-    Array I_positions;
-    Array O_positions;
-    Array T_positions;
-    Array S_positions;
-    Array Z_positions;
-    Array J_positions;
-    Array L_positions;
+    Array<int[][]> I_positions;
+    Array<int[][]> O_positions;
+    Array<int[][]> T_positions;
+    Array<int[][]> S_positions;
+    Array<int[][]> Z_positions;
+    Array<int[][]> J_positions;
+    Array<int[][]> L_positions;
+    Piece newPiece;
+    long newPieceTimer;
 
-    public PieceGenerator(String type) {
+
+    public PieceGenerator() {
+        newPieceTimer = TimeUtils.millis();
         I_positions = makeIPositions();
         O_positions = makeOPositions();
         T_positions = makeTPositions();
@@ -20,10 +28,25 @@ public class PieceGenerator extends Actor {
         Z_positions = makeZPositions();
         J_positions = makeJPositions();
         L_positions = makeLPositions();
-
     }
 
-    private Array makeIPositions(){
+    @Override
+    public void act(float delta) {
+        if (TimeUtils.timeSinceMillis(newPieceTimer) > 5000) {
+            if (newPiece == null) {
+                newPiece = makePiece();
+            }
+        }
+    }
+
+    @Override
+    public void draw(Batch batch, float alpha) {
+        if (newPiece != null) {
+            newPiece.draw(batch, alpha);
+        }
+    }
+
+    private Array<int[][]> makeIPositions(){
         int[][] position0 = new int[][]{
                 {0, 1, 0, 0},
                 {0, 1, 0, 0},
@@ -45,7 +68,7 @@ public class PieceGenerator extends Actor {
         return IPositions;
     }
 
-    private Array makeOPositions(){
+    private Array<int[][]> makeOPositions(){
         int[][] position0 = new int[][]{
                 {0, 0, 0, 0},
                 {0, 0, 0, 0},
@@ -59,7 +82,7 @@ public class PieceGenerator extends Actor {
         return OPositions;
     }
 
-    private Array makeTPositions(){
+    private Array<int[][]> makeTPositions(){
         int[][] position0 = new int[][]{
                 {0, 0, 0, 0},
                 {0, 0, 0, 0},
@@ -100,7 +123,7 @@ public class PieceGenerator extends Actor {
         return TPositions;
     }
 
-    private Array makeSPositions() {
+    private Array<int[][]> makeSPositions() {
         int[][] position0 = new int[][]{
                 {0, 0, 0, 0},
                 {0, 0, 0, 0},
@@ -123,7 +146,7 @@ public class PieceGenerator extends Actor {
         return SPositions;
     }
 
-    private Array makeZPositions() {
+    private Array<int[][]> makeZPositions() {
         int[][] position0 = new int[][]{
                 {0, 0, 0, 0},
                 {0, 0, 0, 0},
@@ -146,7 +169,7 @@ public class PieceGenerator extends Actor {
         return ZPositions;
     }
 
-    private Array makeJPositions(){
+    private Array<int[][]> makeJPositions(){
         int[][] position0 = new int[][]{
                 {0, 0, 0, 0},
                 {0, 1, 0, 0},
@@ -187,7 +210,7 @@ public class PieceGenerator extends Actor {
         return JPositions;
     }
 
-    private Array makeLPositions(){
+    private Array<int[][]> makeLPositions(){
         int[][] position0 = new int[][]{
                 {0, 0, 0, 0},
                 {1, 0, 0, 0},
@@ -228,8 +251,7 @@ public class PieceGenerator extends Actor {
         return LPositions;
     }
 
-
-    private Array makeBlockArray() {
-        return new Array();
+    public Piece makePiece() {
+        return new Piece("L", L_positions, Color.RED);
     }
 }

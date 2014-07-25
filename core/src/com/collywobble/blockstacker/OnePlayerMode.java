@@ -16,13 +16,17 @@ public class OnePlayerMode implements Screen {
     MainGame game;
     GameBoard gameBoard;
     Stage stage;
+    PieceGenerator pieceGenerator;
 
 
     public OnePlayerMode(MainGame game) {
         this.game = game;
         stage = new Stage(new StretchViewport(game.WIDTH, game.HEIGHT));
         gameBoard = new GameBoard();
+        pieceGenerator = new PieceGenerator();
+        pieceGenerator.makePiece();
         stage.addActor(gameBoard);
+        stage.addActor(pieceGenerator);
 
     }
     @Override
