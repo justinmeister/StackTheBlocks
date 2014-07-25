@@ -28,13 +28,13 @@ public class PieceGenerator extends Actor {
         Z_positions = makeZPositions();
         J_positions = makeJPositions();
         L_positions = makeLPositions();
+        newPiece = makePiece();
     }
 
     @Override
     public void act(float delta) {
-        if (TimeUtils.timeSinceMillis(newPieceTimer) > 500) {
-            newPiece = makePiece();
-            newPieceTimer = TimeUtils.millis();
+        if (newPiece != null) {
+            newPiece.act(delta);
         }
     }
 
@@ -43,6 +43,20 @@ public class PieceGenerator extends Actor {
         if (newPiece != null) {
             newPiece.draw(batch, alpha);
         }
+    }
+
+    public void rotatePiece() {
+        int newIndex = (newPiece.getIndex() + 1) % (newPiece.positions.size);
+        newPiece.setIndex(newIndex);
+        newPiece.setBlockPosition();
+    }
+
+    public void movePieceLeft() {
+        newPiece.moveLeft();
+    }
+
+    public void movePieceRight() {
+        newPiece.moveRight();
     }
 
     private Array<int[][]> makeIPositions(){
@@ -252,7 +266,6 @@ public class PieceGenerator extends Actor {
 
     public Piece makePiece() {
         int randomNumber = (int) (Math.random() * 8 - 1);
-        Gdx.app.log("Random number: ", String.valueOf(randomNumber));
 
         switch (randomNumber) {
             case(0):

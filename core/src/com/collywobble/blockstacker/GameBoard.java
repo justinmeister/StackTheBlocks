@@ -10,10 +10,10 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 public class GameBoard extends Actor {
     Rectangle rectangle;
     Texture rectTexture;
-    final int WIDTH = 2 + (25 * 10) + 2;
-    final int HEIGHT = 2 + (25 * 20) + 2;
-    final int START_X = 50;
-    final int START_Y = 800 - HEIGHT - 50;
+    final int WIDTH = 1 + (25 * 10) + 1;
+    final int HEIGHT = 1 + (25 * 20) + 1;
+    final int START_X = 50 - 1;
+    final int START_Y = 800 - HEIGHT - 50 + 1;
 
     public GameBoard() {
         rectangle = new Rectangle(START_X, START_Y, WIDTH, HEIGHT);
