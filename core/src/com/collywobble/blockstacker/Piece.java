@@ -115,7 +115,7 @@ public class Piece extends Actor {
 
         for (Rectangle rect : blockRectangles) {
             rect.setX(rect.getX() - 1);
-            if (rect.getX() < 50) {
+            if (!withinGameBoard()) {
                 rect.setX(rect.getX() + 1);
                 return true;
             }
@@ -140,11 +140,25 @@ public class Piece extends Actor {
 
         for (Rectangle rect : blockRectangles) {
             rect.setX(rect.getX() + 1);
-            if (rect.getX() + 25 > 300) {
+            if (!withinGameBoard()) {
                 rect.setX(rect.getX() - 1);
                 return true;
             }
             rect.setX(rect.getX() - 1);
+        }
+        return false;
+    }
+
+    private boolean touchesFloor() {
+        Array<Rectangle> blockRectangles = getBlockRectangles();
+
+        for (Rectangle rect : blockRectangles) {
+            rect.setY(rect.getY() - 1);
+            if (rect.getY() < 250) {
+                rect.setY(rect.getY() + 1);
+                return true;
+            }
+            rect.setY(rect.getY() + 1);
         }
         return false;
     }
@@ -171,6 +185,19 @@ public class Piece extends Actor {
         if (!withinGameBoard()) {
             setIndex(oldIndex);
             setBlockPosition();
+        }
+    }
+
+    public void moveDown() {
+        if (TimeUtils.timeSinceMillis(moveTimer) > 1000) {
+            if (!touchesFloor()) {
+                moveTimer = TimeUtils.millis();
+                for (Array<Rectangle> rowArray : blockGrid) {
+                    for (Rectangle rectangle : rowArray) {
+                        rectangle.setY(rectangle.getY() - 25);
+                    }
+                }
+            }
         }
     }
 

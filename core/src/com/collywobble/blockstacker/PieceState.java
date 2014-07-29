@@ -26,14 +26,8 @@ public enum PieceState implements State<Piece> {
         }
 
         public void update(Piece piece) {
-        if (TimeUtils.timeSinceMillis(piece.moveTimer) > 1000) {
-            piece.moveTimer = TimeUtils.millis();
-            for (Array<Rectangle> rowArray : piece.blockGrid) {
-                for (Rectangle rectangle : rowArray) {
-                    rectangle.setY(rectangle.getY() - 25);
-                }
-            }
-        }
+            piece.moveDown();
+
     }
     };
 
