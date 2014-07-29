@@ -1,6 +1,10 @@
 package com.collywobble.blockstacker;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
+import com.badlogic.gdx.ai.fsm.State;
+import com.badlogic.gdx.ai.fsm.StateMachine;
+import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -22,8 +26,10 @@ public class Piece extends Actor {
     int[][] position;
     final int SCREEN_HEIGHT = 800;
     long moveTimer;
+    public StateMachine<Piece> stateMachine;
 
     public Piece(String type, Array<int[][]> positions, Color color) {
+        stateMachine = new DefaultStateMachine<Piece>(this, PieceState.WAITING);
         this.type = type;
         this.positions = positions;
         moveTimer = TimeUtils.millis();
@@ -37,12 +43,13 @@ public class Piece extends Actor {
         texture = new Texture(pixmap);
     }
 
+
     private Array<Array<Rectangle>> makeBlockGrid() {
         Array<Array<Rectangle>> blockGrid = new Array<Array<Rectangle>>();
         for (int y = 0; y < 4; y++) {
             Array<Rectangle> row = new Array<Rectangle>();
             for (int x = 0; x < 4; x++) {
-                Rectangle rectangle = new Rectangle((x+2+4)*25,
+                Rectangle rectangle = new Rectangle((x+2+10+2)*25,
                         SCREEN_HEIGHT - ((y+1)*25),
                         WIDTH,
                         HEIGHT);
@@ -68,14 +75,7 @@ public class Piece extends Actor {
 
     @Override
     public void act(float alpha) {
-        if (TimeUtils.timeSinceMillis(moveTimer) > 1000) {
-            moveTimer = TimeUtils.millis();
-            for (Array<Rectangle> rowArray : blockGrid) {
-                for (Rectangle rectangle : rowArray) {
-                    rectangle.setY(rectangle.getY() - 25);
-                }
-            }
-        }
+        stateMachine.update();
     }
 
     public int getIndex() {
@@ -102,8 +102,49 @@ public class Piece extends Actor {
         for (Array<Rectangle> row : blockGrid) {
             for (Rectangle rect : row) {
                 rect.setX(rect.getX() + 25);
+                if (intersectsWithWall()) {
+                    rect.setX((rect.getX() - 25));
+                }
             }
         }
     }
 
+    private boolean intersectsWithWall() {
+        Array<Rectangle> row = blockGrid.get(0);
+        Rectangle topLeft = row.get(0);
+        Rectangle topRight = row.get(row.size-1);
+
+        if (topLeft.getX() < 50) {
+            return true;
+        } else if ((topRight.getX() + 25) > 300) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private Array<Rectangle> getRectanglesForBlocks() {
+        Array<Rectangle> rectArray = new Array<Rectangle>();
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (position[i][j] == 1) {
+                    Array<Rectangle> row = blockGrid.get(i);
+                    rectArray.add(row.get(j));
+                }
+            }
+        }
+        return rectArray;
+    }
+
+    public void setPosition(float newX, float newY) {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                Array<Rectangle> row = blockGrid.get(i);
+                Rectangle rect = row.get(j);
+                rect.setX(newX + (j * 25));
+                rect.setY(newY - (i * 25));
+            }
+        }
+    }
 }
