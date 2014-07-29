@@ -124,6 +124,17 @@ public class Piece extends Actor {
         return false;
     }
 
+    private boolean withinGameBoard() {
+        Array<Rectangle> blockRectangles = getBlockRectangles();
+
+        for (Rectangle rect : blockRectangles) {
+            if (rect.x < 50 || rect.x + 25 > 300) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private boolean intersectsWithRightWall() {
         Array<Rectangle> blockRectangles = getBlockRectangles();
 
@@ -153,9 +164,14 @@ public class Piece extends Actor {
     }
 
     public void rotate() {
-        int newIndex = (getIndex() + 1) % (positions.size);
+        int oldIndex = getIndex();
+        int newIndex = (oldIndex + 1) % (positions.size);
         setIndex(newIndex);
         setBlockPosition();
+        if (!withinGameBoard()) {
+            setIndex(oldIndex);
+            setBlockPosition();
+        }
     }
 
     public void setPosition(float newX, float newY) {
