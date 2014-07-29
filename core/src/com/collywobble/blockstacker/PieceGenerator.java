@@ -46,9 +46,7 @@ public class PieceGenerator extends Actor {
     }
 
     public void rotatePiece() {
-        int newIndex = (newPiece.getIndex() + 1) % (newPiece.positions.size);
-        newPiece.setIndex(newIndex);
-        newPiece.setBlockPosition();
+        newPiece.rotate();
     }
 
     public void movePieceLeft() {

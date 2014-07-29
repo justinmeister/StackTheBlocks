@@ -91,39 +91,54 @@ public class Piece extends Actor {
     }
 
     public void moveLeft() {
-        for (Array<Rectangle> row : blockGrid) {
-            for (Rectangle rect : row) {
-                rect.setX(rect.getX() - 25);
-            }
-        }
-    }
-
-    public void moveRight() {
-        for (Array<Rectangle> row : blockGrid) {
-            for (Rectangle rect : row) {
-                rect.setX(rect.getX() + 25);
-                if (intersectsWithWall()) {
-                    rect.setX((rect.getX() - 25));
+        if (!intersectsWithLeftWall()) {
+            for (Array<Rectangle> row : blockGrid) {
+                for (Rectangle rect : row) {
+                    rect.setX(rect.getX() - 25);
                 }
             }
         }
     }
 
-    private boolean intersectsWithWall() {
-        Array<Rectangle> row = blockGrid.get(0);
-        Rectangle topLeft = row.get(0);
-        Rectangle topRight = row.get(row.size-1);
-
-        if (topLeft.getX() < 50) {
-            return true;
-        } else if ((topRight.getX() + 25) > 300) {
-            return true;
-        } else {
-            return false;
+    public void moveRight() {
+        if (!intersectsWithRightWall()) {
+            for (Array<Rectangle> row : blockGrid) {
+                for (Rectangle rect : row) {
+                    rect.setX(rect.getX() + 25);
+                    }
+                }
+            }
         }
+
+    private boolean intersectsWithLeftWall() {
+        Array<Rectangle> blockRectangles = getBlockRectangles();
+
+        for (Rectangle rect : blockRectangles) {
+            rect.setX(rect.getX() - 1);
+            if (rect.getX() < 50) {
+                rect.setX(rect.getX() + 1);
+                return true;
+            }
+            rect.setX(rect.getX() + 1);
+        }
+        return false;
     }
 
-    private Array<Rectangle> getRectanglesForBlocks() {
+    private boolean intersectsWithRightWall() {
+        Array<Rectangle> blockRectangles = getBlockRectangles();
+
+        for (Rectangle rect : blockRectangles) {
+            rect.setX(rect.getX() + 1);
+            if (rect.getX() + 25 > 300) {
+                rect.setX(rect.getX() - 1);
+                return true;
+            }
+            rect.setX(rect.getX() - 1);
+        }
+        return false;
+    }
+
+    private Array<Rectangle> getBlockRectangles() {
         Array<Rectangle> rectArray = new Array<Rectangle>();
 
         for (int i = 0; i < 4; i++) {
@@ -135,6 +150,12 @@ public class Piece extends Actor {
             }
         }
         return rectArray;
+    }
+
+    public void rotate() {
+        int newIndex = (getIndex() + 1) % (positions.size);
+        setIndex(newIndex);
+        setBlockPosition();
     }
 
     public void setPosition(float newX, float newY) {
