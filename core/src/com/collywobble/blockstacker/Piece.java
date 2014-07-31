@@ -25,6 +25,7 @@ public class Piece extends Actor {
     long moveTimer;
     public StateMachine<Piece> stateMachine;
     private PieceGenerator pieceGenerator;
+    private GameBoard gameBoard;
 
     public Piece(String type, Array<int[][]> positions, Color color, PieceGenerator pieceGenerator) {
         stateMachine = new DefaultStateMachine<Piece>(this, PieceState.WAITING);
@@ -40,6 +41,7 @@ public class Piece extends Actor {
         pixmap.fill();
         texture = new Texture(pixmap);
         this.pieceGenerator = pieceGenerator;
+        gameBoard = pieceGenerator.gameBoard;
     }
 
 
@@ -90,7 +92,7 @@ public class Piece extends Actor {
     }
 
     public void moveLeft() {
-        if (!intersectsWithLeftWall()) {
+        if (!intersectsWithLeftWall() && !intersectsWithPieceToTheLeft()) {
             for (Array<Rectangle> row : blockGrid) {
                 for (Rectangle rect : row) {
                     rect.setX(rect.getX() - 25);
@@ -100,7 +102,7 @@ public class Piece extends Actor {
     }
 
     public void moveRight() {
-        if (!intersectsWithRightWall()) {
+        if (!intersectsWithRightWall() && !intersectsWithPieceToTheRight()) {
             for (Array<Rectangle> row : blockGrid) {
                 for (Rectangle rect : row) {
                     rect.setX(rect.getX() + 25);
@@ -108,6 +110,30 @@ public class Piece extends Actor {
                 }
             }
         }
+
+    private boolean intersectsWithPieceToTheRight() {
+        boolean collision = false;
+        for (Rectangle rect : getBlockRectangles()) {
+            for (Rectangle boardRect : gameBoard.getBoardRects()) {
+                rect.setX(rect.getX() + 1);
+                if (rect.overlaps(boardRect)) collision = true;
+                rect.setX(rect.getX() - 1);
+            }
+        }
+        return collision;
+    }
+
+    private boolean intersectsWithPieceToTheLeft() {
+        boolean collision = false;
+        for (Rectangle rect : getBlockRectangles()) {
+            for (Rectangle boardRect : gameBoard.getBoardRects()) {
+                rect.setX(rect.getX() - 1);
+                if (rect.overlaps(boardRect)) collision = true;
+                rect.setX(rect.getX() + 1);
+            }
+        }
+        return collision;
+    }
 
     private boolean intersectsWithLeftWall() {
         Array<Rectangle> blockRectangles = getBlockRectangles();
@@ -189,7 +215,7 @@ public class Piece extends Actor {
 
     public void moveDown() {
         if (TimeUtils.timeSinceMillis(moveTimer) > 500) {
-            if (touchesFloor()) {
+            if (touchesFloor() || touchesUnderneathPiece()) {
                 pieceGenerator.addPieceToGameBoard(this);
             } else {
                 moveTimer = TimeUtils.millis();
@@ -211,5 +237,20 @@ public class Piece extends Actor {
                 rect.setY(newY - (i * 25));
             }
         }
+    }
+
+    private boolean touchesUnderneathPiece() {
+        boolean rectCollision = false;
+        Array<Rectangle> boardRects = gameBoard.getBoardRects();
+        for (Rectangle pieceRect : getBlockRectangles()) {
+            for (Rectangle boardRect : boardRects) {
+                pieceRect.setY(pieceRect.getY() - 1);
+                if (pieceRect.overlaps(boardRect)) {
+                    rectCollision = true;
+                }
+                pieceRect.setY(pieceRect.getY() + 1);
+            }
+        }
+        return rectCollision;
     }
 }

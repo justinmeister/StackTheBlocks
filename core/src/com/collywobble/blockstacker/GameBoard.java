@@ -68,4 +68,20 @@ public class GameBoard extends Actor {
             }
         }
     }
+
+    public Array<Rectangle> getBoardRects() {
+        Array<Rectangle> boardRects = new Array<Rectangle>();
+
+        for (int i = 0; i < rectArray.length; i++) {
+            for (int j = 0; j < rectArray[i].length; j++) {
+                if (rectArray[i][j] != 0) {
+                    int xPos = (25 * j) + 50;
+                    int yPos = 800 - (25 * i) - 75;
+                    Rectangle rect = new Rectangle(xPos, yPos, 25, 25);
+                    boardRects.add(rect);
+                }
+            }
+        }
+        return boardRects;
+    }
 }
