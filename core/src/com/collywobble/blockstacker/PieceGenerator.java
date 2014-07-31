@@ -3,9 +3,12 @@ package com.collywobble.blockstacker;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
+
+import java.util.Arrays;
 
 public class PieceGenerator extends Actor {
     Array<int[][]> I_positions;
@@ -17,9 +20,12 @@ public class PieceGenerator extends Actor {
     Array<int[][]> L_positions;
     Piece newPiece;
     long newPieceTimer;
+    GameBoard gameBoard;
+    Array<Color> colorArray;
 
 
-    public PieceGenerator() {
+    public PieceGenerator(GameBoard gameBoard) {
+        this.gameBoard = gameBoard;
         newPieceTimer = TimeUtils.millis();
         I_positions = makeIPositions();
         O_positions = makeOPositions();
@@ -29,6 +35,22 @@ public class PieceGenerator extends Actor {
         J_positions = makeJPositions();
         L_positions = makeLPositions();
         newPiece = makePiece();
+        colorArray = makeColorArray();
+    }
+
+    private Array<Color> makeColorArray() {
+        Array<Color> newColorArray = new Array<Color>();
+
+        newColorArray.add(Color.BLACK);
+        newColorArray.add(Color.BLUE);
+        newColorArray.add(Color.PINK);
+        newColorArray.add(Color.CYAN);
+        newColorArray.add(Color.ORANGE);
+        newColorArray.add(Color.RED);
+        newColorArray.add(Color.MAGENTA);
+        newColorArray.add(Color.GREEN);
+
+        return newColorArray;
     }
 
     @Override
@@ -43,6 +65,24 @@ public class PieceGenerator extends Actor {
         if (newPiece != null) {
             newPiece.draw(batch, alpha);
         }
+
+    }
+
+    public void addPieceToGameBoard(Piece piece) {
+        for (Rectangle rect : piece.getBlockRectangles()) {
+            int xIndex = (int) (rect.getX() - 50) / 25;
+            int yIndex = (int) ((800 - rect.getY() - 50 - 25) / 25);
+
+
+            for (int i = 0; i < colorArray.size; i++) {
+                Color colorArrayColor = colorArray.get(i);
+
+                if (colorArrayColor.equals(newPiece.color)) {
+                    gameBoard.rectArray[yIndex][xIndex] = i;
+                }
+            }
+        }
+        newPiece = makePiece();
     }
 
     public void rotatePiece() {
@@ -267,21 +307,21 @@ public class PieceGenerator extends Actor {
 
         switch (randomNumber) {
             case(0):
-                return new Piece("I", I_positions, Color.BLUE);
+                return new Piece("I", I_positions, Color.BLUE, this);
             case(1):
-                return new Piece("O", O_positions, Color.PINK);
+                return new Piece("O", O_positions, Color.PINK, this);
             case(2):
-                return new Piece("T", T_positions, Color.CYAN);
+                return new Piece("T", T_positions, Color.CYAN, this);
             case(3):
-                return new Piece("S", S_positions, Color.ORANGE);
+                return new Piece("S", S_positions, Color.ORANGE, this);
             case(4):
-                return new Piece("Z", Z_positions, Color.RED);
+                return new Piece("Z", Z_positions, Color.RED, this);
             case(5):
-                return new Piece("L", L_positions, Color.MAGENTA);
+                return new Piece("L", L_positions, Color.MAGENTA, this);
             case(6):
-                return new Piece("J", J_positions, Color.GREEN);
+                return new Piece("J", J_positions, Color.GREEN, this);
 
         }
-        return new Piece("J", J_positions, Color.GREEN);
+        return new Piece("J", J_positions, Color.GREEN, this);
     }
 }

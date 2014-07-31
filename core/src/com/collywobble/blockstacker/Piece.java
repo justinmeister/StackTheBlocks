@@ -1,10 +1,7 @@
 package com.collywobble.blockstacker;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
-import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.ai.fsm.StateMachine;
-import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -27,8 +24,9 @@ public class Piece extends Actor {
     final int SCREEN_HEIGHT = 800;
     long moveTimer;
     public StateMachine<Piece> stateMachine;
+    private PieceGenerator pieceGenerator;
 
-    public Piece(String type, Array<int[][]> positions, Color color) {
+    public Piece(String type, Array<int[][]> positions, Color color, PieceGenerator pieceGenerator) {
         stateMachine = new DefaultStateMachine<Piece>(this, PieceState.WAITING);
         this.type = type;
         this.positions = positions;
@@ -41,6 +39,7 @@ public class Piece extends Actor {
         pixmap.setColor(color);
         pixmap.fill();
         texture = new Texture(pixmap);
+        this.pieceGenerator = pieceGenerator;
     }
 
 
@@ -163,7 +162,7 @@ public class Piece extends Actor {
         return false;
     }
 
-    private Array<Rectangle> getBlockRectangles() {
+    public Array<Rectangle> getBlockRectangles() {
         Array<Rectangle> rectArray = new Array<Rectangle>();
 
         for (int i = 0; i < 4; i++) {
@@ -189,8 +188,10 @@ public class Piece extends Actor {
     }
 
     public void moveDown() {
-        if (TimeUtils.timeSinceMillis(moveTimer) > 1000) {
-            if (!touchesFloor()) {
+        if (TimeUtils.timeSinceMillis(moveTimer) > 500) {
+            if (touchesFloor()) {
+                pieceGenerator.addPieceToGameBoard(this);
+            } else {
                 moveTimer = TimeUtils.millis();
                 for (Array<Rectangle> rowArray : blockGrid) {
                     for (Rectangle rectangle : rowArray) {
