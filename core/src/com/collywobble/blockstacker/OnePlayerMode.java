@@ -3,7 +3,6 @@ package com.collywobble.blockstacker;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -17,6 +16,8 @@ public class OnePlayerMode implements Screen {
     GameBoard gameBoard;
     Stage stage;
     PieceGenerator pieceGenerator;
+    final int FAST_FALL_FREQ = 25;
+    final int SLOW_FALL_FREQ = 500;
 
 
 
@@ -34,8 +35,9 @@ public class OnePlayerMode implements Screen {
                 pieceGenerator.rotatePiece();
             }
         });
-        rotateButton.setX(100);
+        rotateButton.setX(150);
         rotateButton.setY(100);
+        rotateButton.setSize(100, 100);
 
         TextButton moveLeftButton = new TextButton("LEFT", skin);
         moveLeftButton.addListener(new ClickListener() {
@@ -46,6 +48,7 @@ public class OnePlayerMode implements Screen {
         });
         moveLeftButton.setX(50);
         moveLeftButton.setY(100);
+        moveLeftButton.setSize(100, 100);
 
         TextButton moveRightButton = new TextButton("RIGHT", skin);
         moveRightButton.addListener(new ClickListener() {
@@ -54,14 +57,32 @@ public class OnePlayerMode implements Screen {
                 pieceGenerator.movePieceRight();
             }
         });
-        moveRightButton.setX(170);
+        moveRightButton.setX(250);
         moveRightButton.setY(100);
+        moveRightButton.setSize(100, 100);
+
+        TextButton moveFastButton = new TextButton("FAST DOWN", skin);
+        moveFastButton.addListener(new ClickListener() {
+            @Override
+            public void touchUp(InputEvent e, float x, float y, int pointer, int button) {
+                pieceGenerator.newPiece.setFallFreq(SLOW_FALL_FREQ);
+            }
+            @Override
+            public boolean touchDown(InputEvent e, float x, float y, int pointer, int button) {
+                pieceGenerator.newPiece.setFallFreq(FAST_FALL_FREQ);
+                return true;
+            }
+        });
+        moveFastButton.setX(50);
+        moveFastButton.setY(0);
+        moveFastButton.setSize(100, 100);
 
         stage.addActor(gameBoard);
         stage.addActor(pieceGenerator);
         stage.addActor(rotateButton);
         stage.addActor(moveLeftButton);
         stage.addActor(moveRightButton);
+        stage.addActor(moveFastButton);
 
 
     }
