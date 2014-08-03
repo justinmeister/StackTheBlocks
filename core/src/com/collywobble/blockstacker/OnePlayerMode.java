@@ -15,7 +15,7 @@ public class OnePlayerMode implements Screen {
     MainGame game;
     GameBoard gameBoard;
     Stage stage;
-    PieceGenerator pieceGenerator;
+    TetrominoManager pieceGenerator;
     final int FAST_FALL_FREQ = 25;
     final int SLOW_FALL_FREQ = 500;
 
@@ -25,7 +25,7 @@ public class OnePlayerMode implements Screen {
         this.game = game;
         stage = new Stage(new StretchViewport(game.WIDTH, game.HEIGHT));
         gameBoard = new GameBoard();
-        pieceGenerator = new PieceGenerator(gameBoard);
+        pieceGenerator = new TetrominoManager(gameBoard);
         Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
         TextButton rotateButton = new TextButton("ROTATE", skin);

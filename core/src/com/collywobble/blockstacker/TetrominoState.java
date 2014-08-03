@@ -10,7 +10,7 @@ public enum TetrominoState implements State<Tetromino> {
         @Override
         public void update(Tetromino tetromino) {
             if (TimeUtils.timeSinceMillis(tetromino.moveTimer) > 2000) {
-                tetromino.stateMachine.changeState(MOVING);
+                //pass
             }
         }
         @Override
