@@ -15,24 +15,22 @@ public class OnePlayerMode implements Screen {
     MainGame game;
     GameBoard gameBoard;
     Stage stage;
-    TetrominoManager pieceGenerator;
+    TetrominoManager tetrominoManager;
     final int FAST_FALL_FREQ = 25;
     final int SLOW_FALL_FREQ = 500;
-
-
 
     public OnePlayerMode(MainGame game) {
         this.game = game;
         stage = new Stage(new StretchViewport(game.WIDTH, game.HEIGHT));
         gameBoard = new GameBoard();
-        pieceGenerator = new TetrominoManager(gameBoard);
+        tetrominoManager = new TetrominoManager(gameBoard);
         Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
         TextButton rotateButton = new TextButton("ROTATE", skin);
         rotateButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent e, float x, float y) {
-                pieceGenerator.rotatePiece();
+                tetrominoManager.rotatePiece();
             }
         });
         rotateButton.setX(150);
@@ -43,7 +41,7 @@ public class OnePlayerMode implements Screen {
         moveLeftButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent e, float x, float y) {
-                pieceGenerator.movePieceLeft();
+                tetrominoManager.movePieceLeft();
             }
         });
         moveLeftButton.setX(50);
@@ -54,7 +52,7 @@ public class OnePlayerMode implements Screen {
         moveRightButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent e, float x, float y) {
-                pieceGenerator.movePieceRight();
+                tetrominoManager.movePieceRight();
             }
         });
         moveRightButton.setX(250);
@@ -65,11 +63,11 @@ public class OnePlayerMode implements Screen {
         moveFastButton.addListener(new ClickListener() {
             @Override
             public void touchUp(InputEvent e, float x, float y, int pointer, int button) {
-                pieceGenerator.newPiece.setFallFreq(SLOW_FALL_FREQ);
+                tetrominoManager.newPiece.setFallFreq(SLOW_FALL_FREQ);
             }
             @Override
             public boolean touchDown(InputEvent e, float x, float y, int pointer, int button) {
-                pieceGenerator.newPiece.setFallFreq(FAST_FALL_FREQ);
+                tetrominoManager.newPiece.setFallFreq(FAST_FALL_FREQ);
                 return true;
             }
         });
@@ -78,7 +76,7 @@ public class OnePlayerMode implements Screen {
         moveFastButton.setSize(100, 100);
 
         stage.addActor(gameBoard);
-        stage.addActor(pieceGenerator);
+        stage.addActor(tetrominoManager);
         stage.addActor(rotateButton);
         stage.addActor(moveLeftButton);
         stage.addActor(moveRightButton);
@@ -102,7 +100,7 @@ public class OnePlayerMode implements Screen {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
-        pieceGenerator.makePiece();
+        tetrominoManager.makePiece();
 
     }
 

@@ -21,7 +21,7 @@ public class TetrominoManager extends Actor {
     public TetrominoManager(GameBoard gameBoard) {
         this.gameBoard = gameBoard;
         setupPositions();
-        newPiece = new Tetromino(Color.GREEN, T_POSITIONS);
+        newPiece = new Tetromino(Color.GREEN, T_POSITIONS, gameBoard.getArray());
     }
 
     @Override
@@ -38,11 +38,17 @@ public class TetrominoManager extends Actor {
 
     }
 
-    public void rotatePiece() {}
+    public void rotatePiece() {
+        newPiece.rotate();
+    }
 
-    public void movePieceLeft() {}
+    public void movePieceLeft() {
+        newPiece.moveLeft();
+    }
 
-    public void movePieceRight() {}
+    public void movePieceRight() {
+        newPiece.moveRight();
+    }
 
     public void makePiece() {}
 

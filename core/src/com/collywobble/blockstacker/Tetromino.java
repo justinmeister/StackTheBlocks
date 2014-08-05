@@ -1,10 +1,9 @@
 package com.collywobble.blockstacker;
 
-import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
-import com.badlogic.gdx.ai.fsm.StateMachine;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
@@ -22,34 +21,48 @@ public class Tetromino extends Actor {
     Array<int[][]> positions;
     int positionIndex;
     int[][] position;
+    int[][] boardArray;
+    int maxPieceWidth;
+    int maxPieceHeight = 0;
 
     final String TOP = "top";
     final String LEFT = "left";
 
-    public Tetromino(Color color, Array<int[][]> positions) {
+    public Tetromino(Color color, Array<int[][]> positions, int[][] boardArray) {
         topLeftPos = new HashMap<String, Integer>();
         moveTimer = TimeUtils.millis();
         this.positions = positions;
         positionIndex = 0;
         position = this.positions.get(positionIndex);
+        this.boardArray = boardArray;
 
         setupTopLeftPos();
         setupTexture(color);
-        getRectArray();
+        makeRectArray();
 
     }
 
-    private void getRectArray() {
+    private void makeRectArray() {
+        maxPieceWidth = 0;
+        int tempRowWidth = 0;
+
         rectArray = new Array<Rectangle>();
         for (int i = 0; i < position.length; i++) {
             for (int j = 0; j < position[i].length; j++) {
-                Rectangle rectangle = new Rectangle(
-                        25,
-                        25,
-                        50 + (topLeftPos.get(LEFT) + j) * 25,
-                        50 + (topLeftPos.get(TOP) + i) * 25);
-                rectArray.add(rectangle);
+                if (position[i][j] != 0) {
+                    Rectangle rectangle = new Rectangle(
+                            50 + (topLeftPos.get(LEFT) + j) * 25,
+                            800 - (topLeftPos.get(TOP) + i) * 25 - 25,
+                            25,
+                            25);
+                    rectArray.add(rectangle);
+                    tempRowWidth++;
+                }
             }
+            if (maxPieceWidth < tempRowWidth) {
+                maxPieceWidth = tempRowWidth;
+            }
+            tempRowWidth = 0;
         }
     }
 
@@ -64,7 +77,14 @@ public class Tetromino extends Actor {
     private void setupTopLeftPos() {
         topLeftPos = new HashMap<String, Integer>();
         topLeftPos.put(TOP, 0);
-        topLeftPos.put(LEFT, 0);
+        topLeftPos.put(LEFT, 3);
+    }
+
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        for (Rectangle rect : rectArray) {
+            batch.draw(texture, rect.getX(), rect.getY());
+        }
     }
 
     @Override
@@ -74,9 +94,72 @@ public class Tetromino extends Actor {
 
     public void moveDown() {
         if (TimeUtils.timeSinceMillis(moveTimer) > fallFreq) {
+            makeRectArray();
             moveTimer = TimeUtils.millis();
             topLeftPos.put(TOP, topLeftPos.get(TOP) + 1);
         }
+    }
+
+    public void rotate() {
+        positionIndex = (positionIndex + 1) % (position.length);
+        position = positions.get(positionIndex);
+        makeRectArray();
+    }
+
+    public void moveRight() {
+        if (rightSideOpen()) {
+            topLeftPos.put(LEFT, topLeftPos.get(LEFT) + 1);
+            makeRectArray();
+        }
+    }
+
+    public void moveLeft() {
+        if (leftSideOpen()) {
+            topLeftPos.put(LEFT, topLeftPos.get(LEFT) - 1);
+            makeRectArray();
+        }
+    }
+
+    private boolean rightSideOpen() {
+        boolean rightEmpty = true;
+
+        for (int i = 0; i < position.length; i++) {
+            for (int j = 0; j < maxPieceWidth; j++) {
+                int y = i + topLeftPos.get(TOP);
+                int x = j + topLeftPos.get(LEFT) + 1;
+
+                if (x >= 0
+                        && x < 10
+                        && y >= 0
+                        && y < 20) {
+                    if (boardArray[y][x] != 0) {
+                        rightEmpty = false;
+                    }
+                } else rightEmpty = false;
+            }
+        }
+        return rightEmpty;
+    }
+
+    private boolean leftSideOpen() {
+        boolean leftEmpty = true;
+
+        for (int i = 0; i < position.length; i++) {
+            for (int j = 0; j < maxPieceWidth; j++) {
+                int y = i + topLeftPos.get(TOP);
+                int x = j + topLeftPos.get(LEFT) - 1;
+
+                if (x >= 0
+                        && x < 10
+                        && y >= 0
+                        && y < 20) {
+                    if (boardArray[y][x] != 0) {
+                        leftEmpty = false;
+                    }
+                } else leftEmpty = false;
+            }
+        }
+        return leftEmpty;
     }
 
     public int getFallFreq() {
