@@ -82,34 +82,28 @@ public class TetrominoManager extends Actor {
         O_POSITIONS.add(position2);
 
         int[][] position3 = new int[][]{
-                {0, 0, 0, 0},
-                {0, 0, 0, 0},
-                {1, 1, 1, 0},
-                {0, 1, 0, 0}
+                {1, 1, 1},
+                {0, 1, 0}
         };
 
 
         int[][] position4 = new int[][]{
-                {0, 0, 0, 0},
-                {0, 1, 0, 0},
-                {1, 1, 0, 0},
-                {0, 1, 0, 0}
+                {0, 1},
+                {1, 1},
+                {0, 1}
         };
 
 
         int[][] position5 = new int[][]{
-                {0, 0, 0, 0},
-                {0, 1, 0, 0},
-                {1, 1, 1, 0},
-                {0, 0, 0, 0}
+                {0, 1, 0},
+                {1, 1, 1}
         };
 
 
         int[][] position6 = new int[][]{
-                {0, 0, 0, 0},
-                {0, 1, 0, 0},
-                {0, 1, 1, 0},
-                {0, 1, 0, 0}
+                {0, 1, 0},
+                {0, 1, 1},
+                {0, 1, 0}
         };
 
         T_POSITIONS = new Array<int[][]>();

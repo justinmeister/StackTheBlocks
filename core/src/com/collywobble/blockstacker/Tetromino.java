@@ -1,5 +1,6 @@
 package com.collywobble.blockstacker;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Tetromino extends Actor {
-    int fallFreq = 500;
+    int fallFreq = 2000;
     long moveTimer;
     Map<String, Integer> topLeftPos;
     Texture texture;
@@ -23,7 +24,7 @@ public class Tetromino extends Actor {
     int[][] position;
     int[][] boardArray;
     int maxPieceWidth;
-    int maxPieceHeight = 0;
+    int maxPieceHeight;
 
     final String TOP = "top";
     final String LEFT = "left";
@@ -44,7 +45,10 @@ public class Tetromino extends Actor {
 
     private void makeRectArray() {
         maxPieceWidth = 0;
+        maxPieceHeight = 0;
         int tempRowWidth = 0;
+        int tempRowHeight = 0;
+        int tempRectCount = 0;
 
         rectArray = new Array<Rectangle>();
         for (int i = 0; i < position.length; i++) {
@@ -52,11 +56,18 @@ public class Tetromino extends Actor {
                 if (position[i][j] != 0) {
                     Rectangle rectangle = new Rectangle(
                             50 + (topLeftPos.get(LEFT) + j) * 25,
-                            800 - (topLeftPos.get(TOP) + i) * 25 - 25,
+                            800 - ((topLeftPos.get(TOP) + i) * 25) - 75,
                             25,
                             25);
                     rectArray.add(rectangle);
                     tempRowWidth++;
+                    tempRectCount++;
+                }
+                if (j == position[i].length - 1) {
+                    if (rectArray.size == 0 || tempRectCount > 0) {
+                        tempRowHeight++;
+                    }
+                    tempRectCount = 0;
                 }
             }
             if (maxPieceWidth < tempRowWidth) {
@@ -64,6 +75,7 @@ public class Tetromino extends Actor {
             }
             tempRowWidth = 0;
         }
+        maxPieceHeight = tempRowHeight;
     }
 
     private void setupTexture(Color color) {
@@ -93,11 +105,34 @@ public class Tetromino extends Actor {
     }
 
     public void moveDown() {
-        if (TimeUtils.timeSinceMillis(moveTimer) > fallFreq) {
+        if (TimeUtils.timeSinceMillis(moveTimer) > fallFreq && bottomEmpty()) {
+            topLeftPos.put(TOP, topLeftPos.get(TOP) + 1);
             makeRectArray();
             moveTimer = TimeUtils.millis();
-            topLeftPos.put(TOP, topLeftPos.get(TOP) + 1);
         }
+    }
+
+    private boolean bottomEmpty() {
+        boolean bottomEmpty = true;
+
+        for (int i = 0; i < maxPieceHeight; i++) {
+            for (int j = 0; j < maxPieceWidth; j++) {
+                int y = i + topLeftPos.get(TOP) + 1;
+                int x = j + topLeftPos.get(LEFT);
+
+                if (x >= 0
+                        && x < 10
+                        && y >= 0
+                        && y < 20) {
+                    if (boardArray[y][x] != 0) {
+                        bottomEmpty = false;
+                    }
+                } else {
+                    bottomEmpty = false;
+                }
+            }
+        }
+        return bottomEmpty;
     }
 
     public void rotate() {
@@ -123,7 +158,7 @@ public class Tetromino extends Actor {
     private boolean rightSideOpen() {
         boolean rightEmpty = true;
 
-        for (int i = 0; i < position.length; i++) {
+        for (int i = 0; i < maxPieceHeight; i++) {
             for (int j = 0; j < maxPieceWidth; j++) {
                 int y = i + topLeftPos.get(TOP);
                 int x = j + topLeftPos.get(LEFT) + 1;
@@ -135,7 +170,9 @@ public class Tetromino extends Actor {
                     if (boardArray[y][x] != 0) {
                         rightEmpty = false;
                     }
-                } else rightEmpty = false;
+                } else {
+                    rightEmpty = false;
+                }
             }
         }
         return rightEmpty;
