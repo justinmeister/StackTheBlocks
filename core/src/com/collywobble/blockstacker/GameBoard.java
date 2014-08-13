@@ -19,9 +19,22 @@ public class GameBoard extends Actor {
 
 
     public GameBoard() {
-        array = new int[20][10];
+        makeBoardArray();
         boardOutline = new Rectangle(START_X, START_Y, WIDTH, HEIGHT);
         makeBoardOutlineTexture();
+
+    }
+
+    private void makeBoardArray() {
+        array = new int[25][25];
+
+        for (int i = 0; i < array.length; i++) {
+            array[i][1] = 9;
+            array[i][12] = 9;
+        }
+        for (int i = 0; i < array[0].length; i++) {
+            array[22][i] = 9;
+        }
 
     }
 
